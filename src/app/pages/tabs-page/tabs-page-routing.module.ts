@@ -9,33 +9,46 @@ const routes: Routes = [
     path: 'tabs',
     component: TabsPage,
     children: [
+      // {
+      //   path: 'schedule',
+      //   children: [
+      //     {
+      //       path: '',
+      //       component: SchedulePage,
+      //     },
+      //     {
+      //       path: 'session/:sessionId',
+      //       loadChildren: () => import('../session-detail/session-detail.module').then(m => m.SessionDetailModule)
+      //     }
+      //   ]
+      // },
+      // {
+      //   path: 'speakers',
+      //   children: [
+      //     {
+      //       path: '',
+      //       loadChildren: () => import('../speaker-list/speaker-list.module').then(m => m.SpeakerListModule)
+      //     },
+      //     {
+      //       path: 'session/:sessionId',
+      //       loadChildren: () => import('../session-detail/session-detail.module').then(m => m.SessionDetailModule)
+      //     },
+      //     {
+      //       path: 'speaker-details/:speakerId',
+      //       loadChildren: () => import('../speaker-detail/speaker-detail.module').then(m => m.SpeakerDetailModule)
+      //     }
+      //   ]
+      // },
       {
-        path: 'schedule',
+        path: 'movies',
         children: [
           {
             path: '',
-            component: SchedulePage,
+            loadChildren: './pages/movies/movies.module#MoviesPageModule'
           },
           {
-            path: 'session/:sessionId',
-            loadChildren: () => import('../session-detail/session-detail.module').then(m => m.SessionDetailModule)
-          }
-        ]
-      },
-      {
-        path: 'speakers',
-        children: [
-          {
-            path: '',
-            loadChildren: () => import('../speaker-list/speaker-list.module').then(m => m.SpeakerListModule)
-          },
-          {
-            path: 'session/:sessionId',
-            loadChildren: () => import('../session-detail/session-detail.module').then(m => m.SessionDetailModule)
-          },
-          {
-            path: 'speaker-details/:speakerId',
-            loadChildren: () => import('../speaker-detail/speaker-detail.module').then(m => m.SpeakerDetailModule)
+            path: 'movies/:id',
+            loadChildren: './pages/movie-details/movie-details.module#MovieDetailsPageModule'
           }
         ]
       },
@@ -45,6 +58,16 @@ const routes: Routes = [
           {
             path: '',
             loadChildren: () => import('../map/map.module').then(m => m.MapModule)
+          }
+        ]
+      },
+      {
+        path: 'captions',
+        children: [
+          {
+            path: '',
+            loadChildren: () => import('../home/home.module').then(m => m.HomePageModule)
+            // loadChildren: './home/home.module#HomePageModule'
           }
         ]
       },
@@ -59,7 +82,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/app/tabs/schedule',
+        redirectTo: '/app/tabs/captions',
         pathMatch: 'full'
       }
     ]

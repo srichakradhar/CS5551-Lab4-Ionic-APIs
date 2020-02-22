@@ -32,11 +32,31 @@ const routes: Routes = [
     path: 'tutorial',
     loadChildren: () => import('./pages/tutorial/tutorial.module').then(m => m.TutorialModule),
     canLoad: [CheckTutorial]
-  }
+  },
+  {
+    path: 'movies',
+    loadChildren: './pages/movies/movies.module#MoviesPageModule'
+  },
+  {
+    path: 'movies/:id',
+    loadChildren: './pages/movie-details/movie-details.module#MovieDetailsPageModule'
+  },
+  {
+    path: 'captions',
+    loadChildren: './pages/home/home.module#HomePageModule'
+  },
+  // {
+  //   path: 'movies',
+  //   loadChildren: () => import('./pages/movies/movies.module#MoviesPageModule').then(m => m.MoviesPageModule)
+  // },
+  // {
+  //   path: 'movies/:id',
+  //   loadChildren: () => import('./pages/movie-details/movie-details.module#MovieDetailsPageModule').then(m => m.MovieDetailsPageModule)
+  // }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

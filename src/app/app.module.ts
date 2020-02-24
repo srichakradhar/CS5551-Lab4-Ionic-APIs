@@ -10,12 +10,16 @@ import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { Crop } from '@ionic-native/crop/ngx';
 import { RouteReuseStrategy } from '@angular/router';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-
+import { File } from '@ionic-native/file/ngx';
+import { Camera } from '@ionic-native/Camera/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 
 @NgModule({
   imports: [
@@ -33,7 +37,13 @@ import { FormsModule } from '@angular/forms';
   providers: [
     InAppBrowser, SplashScreen, StatusBar,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    ImagePicker, Crop, FileTransfer, FileTransferObject
+    TextToSpeech,
+    FilePath,
+    File,
+    FileTransfer, FileTransferObject,
+    ImagePicker, Crop,
+    Camera,
+    WebView
   ],
   bootstrap: [AppComponent]
 })

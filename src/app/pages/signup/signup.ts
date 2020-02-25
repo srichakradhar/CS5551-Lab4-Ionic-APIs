@@ -27,7 +27,8 @@ export class SignupPage {
 
     if (form.valid) {
       this.userData.signup(this.signup.username);
-      this.router.navigateByUrl('/app/tabs/captions');
+      localStorage.setItem('user', JSON.stringify(form.form.value))
+      this.router.navigateByUrl('/app/tabs/movies');
     }
   }
 }

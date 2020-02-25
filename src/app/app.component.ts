@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     }
   ];
   loggedIn = false;
-  dark = false;
+  dark = true;
 
   constructor(
     private menu: MenuController,
@@ -123,7 +123,8 @@ export class AppComponent implements OnInit {
 
   logout() {
     this.userData.logout().then(() => {
-      return this.router.navigateByUrl('/app/tabs/captions');
+      localStorage.removeItem('user');
+      return this.router.navigateByUrl('/login');
     });
   }
 

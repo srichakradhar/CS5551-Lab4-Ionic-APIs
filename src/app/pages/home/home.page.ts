@@ -8,6 +8,7 @@ import { Storage } from '@ionic/storage';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
+import { Crop } from '@ionic-native/crop/ngx';
 
 import { finalize } from 'rxjs/operators';
 import { ReadVarExpr } from '@angular/compiler';
@@ -29,8 +30,9 @@ export class HomePage implements OnInit {
   NLPurl: string = "https://api.cloudmersive.com/nlp/language/detect";
   imgBlob: any;
   imageData: any;
-  
+
   constructor(private camera: Camera, private file: File, private http: HttpClient, private webview: WebView,
+    private crop: Crop,
     private actionSheetController: ActionSheetController, private toastController: ToastController,
     private storage: Storage, private platform: Platform, private loadingController: LoadingController,
     private ref: ChangeDetectorRef, private filePath: FilePath, private transfer: FileTransfer, private tts: TextToSpeech) { }
@@ -106,18 +108,24 @@ export class HomePage implements OnInit {
     };
 
     this.camera.getPicture(options).then(imagePath => {
-      if (this.platform.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
-        this.filePath.resolveNativePath(imagePath)
-          .then(filePath => {
-            let correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
-            let currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
-            this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
+      this.crop.crop(imagePath, { quality: 100 })
+        .then(
+          newImagePath => {
+            if (this.platform.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
+              this.filePath.resolveNativePath(newImagePath)
+                .then(filePath => {
+                  let correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
+                  let currentName = newImagePath.substring(newImagePath.lastIndexOf('/') + 1, newImagePath.lastIndexOf('?'));
+                  currentName = currentName.split('?')[0];
+                  this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
+                });
+            } else {
+              var currentName = newImagePath.substr(newImagePath.lastIndexOf('/') + 1);
+              currentName = currentName.split('?')[0];
+              var correctPath = newImagePath.substr(0, newImagePath.lastIndexOf('/') + 1);
+              this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
+            }
           });
-      } else {
-        var currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
-        var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
-        this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
-      }
     });
   }
   createFileName() {
@@ -128,16 +136,20 @@ export class HomePage implements OnInit {
   }
 
   copyFileToLocalDir(namePath, currentName, newFileName) {
+    console.log('params:', namePath, currentName, newFileName);
     this.file.copyFile(namePath, currentName, this.file.dataDirectory, newFileName).then(success => {
       this.updateStoredImages(newFileName);
     }, error => {
       this.presentToast('Error while storing file.');
+      console.log('error while storing file:', error);
     });
   }
 
   updateStoredImages(name) {
     this.storage.get(STORAGE_KEY).then(images => {
       let arr = JSON.parse(images);
+      console.log('arr:', arr);
+      console.log('name param:', name);
       if (!arr) {
         let newImages = [name];
         this.storage.set(STORAGE_KEY, JSON.stringify(newImages));
@@ -181,9 +193,9 @@ export class HomePage implements OnInit {
   startUpload(imgEntry) {
     this.file.resolveLocalFilesystemUrl(imgEntry.filePath)
       .then(entry => {
-      console.log('imgEntry: ' + JSON.stringify(imgEntry));
-    this.path = imgEntry.FilePath;
-    (<FileEntry>entry).file(file => this.readFile(file))
+        console.log('imgEntry: ' + JSON.stringify(imgEntry));
+        this.path = imgEntry.FilePath;
+        (<FileEntry>entry).file(file => this.readFile(file))
       })
       .catch(err => {
         this.presentToast('Error while reading file.');
@@ -200,7 +212,7 @@ export class HomePage implements OnInit {
       });
       this.imageData = file.localURL;
       this.path = file.name;
-      console.log('imgBlob',  this.imgBlob);
+      console.log('imgBlob', this.imgBlob);
       console.log('file:', file);
       formData.append('file', this.imgBlob, file.name);
       for (var key in formData) {
@@ -226,7 +238,7 @@ export class HomePage implements OnInit {
     const uploadOpts: FileUploadOptions = {
       fileKey: 'file',
       fileName: this.path,
-      headers: {'Content-Type': 'application/multipart-formdata', 'Apikey': '6d626dcd-d35e-4d72-b459-48c70851413a'}
+      headers: { 'Content-Type': 'application/multipart-formdata', 'Apikey': '6d626dcd-d35e-4d72-b459-48c70851413a' }
     };
     // this.presentToast('fileName: ' + this.path);
     const fileTransfer: FileTransferObject = this.transfer.create();

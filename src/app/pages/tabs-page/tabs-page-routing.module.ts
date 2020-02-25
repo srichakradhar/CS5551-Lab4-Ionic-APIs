@@ -82,7 +82,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/app/tabs/captions',
+        redirectTo: '/app/tabs/movies',
         pathMatch: 'full'
       }
     ]

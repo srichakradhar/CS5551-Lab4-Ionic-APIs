@@ -24,10 +24,11 @@ export class LoginPage {
 
   onLogin(form: NgForm) {
     this.submitted = true;
-
+    console.log(form.form.value);
+    localStorage.setItem('user', JSON.stringify(form.form.value));
     if (form.valid) {
       this.userData.login(this.login.username);
-      this.router.navigateByUrl('/app/tabs/schedule');
+      this.router.navigateByUrl('/app/tabs/movies');
     }
   }
 
